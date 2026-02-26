@@ -1,0 +1,162 @@
+<div class="aboutme-container">
+  <div class="content">
+    <!-- Header con foto/avatar -->
+    <div class="header">
+      <div class="avatar-wrapper">
+        <div class="avatar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Disponible
+        </div>
+      </div>
+      <h1 class="name">{{ personalInfo.name }} {{ personalInfo.lastName }}</h1>
+      <p class="role">{{ personalInfo.role }}</p>
+    </div>
+
+    <!-- Información Personal -->
+    <div class="info-grid">
+      <!-- Card de Datos Básicos -->
+      <div class="info-card basic-info">
+        <div class="card-header">
+          <div class="icon-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h2>Información Personal</h2>
+        </div>
+        <div class="card-content">
+          <div class="info-item">
+            <span class="label">Edad</span>
+            <span class="value">{{ personalInfo.age }} años</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Lugar de Nacimiento</span>
+            <span class="value">{{ personalInfo.birthPlace }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Universidad</span>
+            <span class="value">{{ personalInfo.university }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Música -->
+      <div class="info-card interests-card">
+        <div class="card-header">
+          <div class="icon-box music">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 18V5l12-2v13"></path>
+              <circle cx="6" cy="18" r="3"></circle>
+              <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+          </div>
+          <h2>Música Favorita</h2>
+        </div>
+        <div class="card-content">
+          <ul class="interests-list">
+            @for (music of personalInfo.interests.music; track music) {
+              <li>{{ music }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card de Películas -->
+      <div class="info-card interests-card">
+        <div class="card-header">
+          <div class="icon-box movies">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect>
+              <polyline points="17 2 12 7 7 2"></polyline>
+            </svg>
+          </div>
+          <h2>Películas Favoritas</h2>
+        </div>
+        <div class="card-content">
+          <ul class="interests-list">
+            @for (movie of personalInfo.interests.movies; track movie) {
+              <li>{{ movie }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card de Series -->
+      <div class="info-card interests-card">
+        <div class="card-header">
+          <div class="icon-box series">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="10" rx="2" ry="2"></rect>
+              <line x1="2" y1="17" x2="7" y2="22"></line>
+              <line x1="17" y1="22" x2="22" y2="17"></line>
+              <line x1="7" y1="22" x2="17" y2="22"></line>
+              <line x1="12" y1="7" x2="12" y2="3"></line>
+              <line x1="9" y1="5" x2="15" y2="5"></line>
+            </svg>
+          </div>
+          <h2>Series Favoritas</h2>
+        </div>
+        <div class="card-content">
+          <ul class="interests-list">
+            @for (series of personalInfo.interests.series; track series) {
+              <li>{{ series }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card de Libros -->
+      <div class="info-card interests-card">
+        <div class="card-header">
+          <div class="icon-box books">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <h2>Libros Favoritos</h2>
+        </div>
+        <div class="card-content">
+          <ul class="interests-list">
+            @for (book of personalInfo.interests.books; track book) {
+              <li>{{ book }}</li>
+            }
+          </ul>
+        </div>
+      </div>
+
+      <!-- Card de Bio -->
+      <div class="info-card bio-card">
+        <div class="card-header">
+          <div class="icon-box bio">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+          </div>
+          <h2>Sobre Mí</h2>
+        </div>
+        <div class="card-content">
+          <p class="bio-text">{{ personalInfo.bio }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer con redes sociales (opcional) -->
+    <div class="footer">
+      <p class="footer-text">Gracias por visitar mi perfil</p>
+    </div>
+  </div>
+</div>

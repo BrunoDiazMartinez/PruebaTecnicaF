@@ -1,0 +1,439 @@
+<div class="contries-container">
+  <!-- Spinner Global -->
+  <app-loading-spinner 
+    [show]="loading() || loadingDetails()" 
+    [message]="loadingDetails() ? 'Cargando detalles del país...' : 'Cargando países...'"
+    [submessage]="loadingDetails() ? 'Obteniendo información completa' : 'Consultando datos desde el servidor'">
+  </app-loading-spinner>
+
+  <div class="content">
+    <!-- Header -->
+    <div class="header">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </div>
+      <h1>Países del Mundo</h1>
+      <p class="subtitle">Explora información de {{ countries().length }} países</p>
+    </div>
+
+    <!-- Estado de Error -->
+    @if (error() && !loading()) {
+      <div class="error-state">
+        <div class="error-icon">!</div>
+        <h3>Error al cargar países</h3>
+        <p>{{ error() }}</p>
+        <button class="retry-button" (click)="retry()">
+          Reintentar
+        </button>
+      </div>
+    }
+
+    <!-- Contenido Principal -->
+    @if (!loading() && !error()) {
+      <!-- Controles de Búsqueda y Filtros -->
+      <div class="controls">
+        <!-- Búsqueda -->
+        <div class="search-box">
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre, código o capital..."
+            [value]="searchTerm()"
+            (input)="onSearch($any($event.target).value)"
+            class="search-input"
+          />
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+          <!-- Filtro por Continente -->
+          <select 
+            [value]="selectedContinent()" 
+            (change)="onContinentChange($any($event.target).value)"
+            class="filter-select"
+          >
+            <option value="all">Todos los continentes</option>
+            @for (continent of continents(); track continent) {
+              <option [value]="continent">{{ translateContinent(continent) }}</option>
+            }
+          </select>
+
+          <!-- Ordenar -->
+          <select 
+            [value]="sortBy()" 
+            (change)="onSortChange($any($event.target).value)"
+            class="filter-select"
+          >
+            <option value="name">Ordenar A-Z</option>
+            <option value="population">Por población</option>
+            <option value="code">Por código</option>
+          </select>
+
+          <!-- Botón Limpiar Filtros -->
+          @if (hasActiveFilters()) {
+            <button class="clear-filters-button" (click)="clearFilters()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Limpiar Filtros
+            </button>
+          }
+        </div>
+
+        <!-- Contador de resultados -->
+        <div class="results-count">
+          Mostrando <strong>{{ filteredCountries().length }}</strong> de {{ countries().length }} países
+          @if (hasActiveFilters()) {
+            <span class="filter-indicator">(filtrado)</span>
+          }
+        </div>
+      </div>
+
+      <!-- Grid de Países -->
+      <div class="countries-grid">
+        @for (country of filteredCountries(); track country.code) {
+          <div class="country-card" (click)="selectCountry(country)">
+            <div class="card-image-wrapper">
+              @if (country.flag) {
+                <img [src]="country.flag" [alt]="country.name + ' flag'" class="country-flag-img" />
+              } @else {
+                <div class="flag-placeholder">
+                  <span>🏳️</span>
+                </div>
+              }
+            </div>
+            <div class="card-content">
+              <h3 class="country-name">{{ country.name }}</h3>
+            </div>
+          </div>
+        } @empty {
+          <div class="no-results">
+            <p>No se encontraron países con esos criterios</p>
+            <button (click)="searchTerm.set(''); selectedContinent.set('all')" class="clear-button">
+              Limpiar filtros
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Modal de Detalles del País -->
+    @if (selectedCountry()) {
+      <div class="modal-overlay" (click)="closeDetails()">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+          <button class="close-button" (click)="closeDetails()">X</button>
+          <button class="pdf-button" (click)="downloadPDF()" title="Descargar PDF">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            PDF
+          </button>
+          
+          <div class="modal-header">
+            @if (selectedCountry()!.flag) {
+              <img [src]="selectedCountry()!.flag" [alt]="selectedCountry()!.name" class="modal-flag" />
+            } @else {
+              <div class="flag-placeholder-large">Sin bandera</div>
+            }
+            <h2>{{ selectedCountry()!.name }}</h2>
+            <p class="official-name">{{ selectedCountry()!.metadata?.officialName || selectedCountry()!.name }}</p>
+          </div>
+
+          <div class="modal-body">
+            <!-- Información General -->
+            <div class="info-section">
+              <h3>Información General</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <strong>Código ISO 2:</strong>
+                  <span>{{ selectedCountry()!.code }}</span>
+                </div>
+                @if (selectedCountry()!.cca3) {
+                  <div class="info-item">
+                    <strong>Código ISO 3:</strong>
+                    <span>{{ selectedCountry()!.cca3 }}</span>
+                  </div>
+                }
+                <div class="info-item">
+                  <strong>Capital:</strong>
+                  <span>{{ selectedCountry()!.capital || 'N/A' }}</span>
+                </div>
+                @if (selectedCountry()!.native) {
+                  <div class="info-item">
+                    <strong>Nombre Nativo:</strong>
+                    <span>{{ selectedCountry()!.native }}</span>
+                  </div>
+                }
+                <div class="info-item">
+                  <strong>Continente:</strong>
+                  <span>{{ translateContinent(selectedCountry()!.continent) }}</span>
+                </div>
+                @if (selectedCountry()!.region || selectedCountry()!.metadata?.region) {
+                  <div class="info-item">
+                    <strong>Región:</strong>
+                    <span>{{ selectedCountry()!.region || selectedCountry()!.metadata?.region || 'N/A' }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.subregion || selectedCountry()!.metadata?.subregion) {
+                  <div class="info-item">
+                    <strong>Subregión:</strong>
+                    <span>{{ selectedCountry()!.subregion || selectedCountry()!.metadata?.subregion || 'N/A' }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.independent !== undefined) {
+                  <div class="info-item">
+                    <strong>Independiente:</strong>
+                    <span>{{ selectedCountry()!.independent ? 'Sí' : 'No' }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.unMember !== undefined) {
+                  <div class="info-item">
+                    <strong>Miembro ONU:</strong>
+                    <span>{{ selectedCountry()!.unMember ? 'Sí' : 'No' }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.startOfWeek) {
+                  <div class="info-item">
+                    <strong>Inicio de Semana:</strong>
+                    <span>{{ translateWeekday(selectedCountry()!.startOfWeek!) }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Geografía -->
+            <div class="info-section">
+              <h3>Geografía</h3>
+              <div class="info-grid">
+                @if (selectedCountry()!.latlng && selectedCountry()!.latlng!.length === 2) {
+                  <div class="info-item full-width">
+                    <strong>Coordenadas:</strong>
+                    <span>{{ selectedCountry()!.latlng![0].toFixed(4) }}°N, {{ selectedCountry()!.latlng![1].toFixed(4) }}°E</span>
+                  </div>
+                }
+                @if (selectedCountry()!.area) {
+                  <div class="info-item">
+                    <strong>Área:</strong>
+                    <span>{{ formatArea(selectedCountry()!.area!) }} km²</span>
+                  </div>
+                }
+                @if (selectedCountry()!.landlocked !== undefined) {
+                  <div class="info-item">
+                    <strong>Sin litoral:</strong>
+                    <span>{{ selectedCountry()!.landlocked ? 'Sí' : 'No' }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.borders && selectedCountry()!.borders!.length > 0) {
+                  <div class="info-item full-width">
+                    <strong>Fronteras ({{ selectedCountry()!.borders!.length }}):</strong>
+                    <div class="chips-container">
+                      @for (border of selectedCountry()!.borders; track border) {
+                        <span class="chip">{{ border }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Población y Demografía -->
+            <div class="info-section">
+              <h3>Población y Demografía</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <strong>Población:</strong>
+                  <span>{{ formatPopulation(selectedCountry()!.population) }} habitantes</span>
+                </div>
+                @if (selectedCountry()!.demonyms && selectedCountry()!.demonyms!['spa']) {
+                  <div class="info-item">
+                    <strong>Gentilicio (M):</strong>
+                    <span>{{ selectedCountry()!.demonyms!['spa'].m }}</span>
+                  </div>
+                  <div class="info-item">
+                    <strong>Gentilicio (F):</strong>
+                    <span>{{ selectedCountry()!.demonyms!['spa'].f }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Economía -->
+            <div class="info-section">
+              <h3>Economía</h3>
+              <div class="info-grid">
+                @if (selectedCountry()!.currencyDetails) {
+                  @for (curr of getCurrencyEntries(selectedCountry()!.currencyDetails!); track curr.code) {
+                    <div class="info-item full-width">
+                      <strong>Moneda ({{ curr.code }}):</strong>
+                      <span>{{ curr.value.name }} ({{ curr.value.symbol }})</span>
+                    </div>
+                  }
+                } @else if (selectedCountry()!.currency) {
+                  <div class="info-item full-width">
+                    <strong>Moneda:</strong>
+                    <span>{{ selectedCountry()!.currency }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.currencies && selectedCountry()!.currencies!.length > 0) {
+                  <div class="info-item full-width">
+                    <strong>Otras monedas:</strong>
+                    <span>{{ selectedCountry()!.currencies!.join(', ') }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Comunicación -->
+            <div class="info-section">
+              <h3>Comunicación</h3>
+              <div class="info-grid">
+                @if (selectedCountry()!.phone) {
+                  <div class="info-item">
+                    <strong>Código de Área:</strong>
+                    <span>+{{ selectedCountry()!.phone }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.phones && selectedCountry()!.phones!.length > 0) {
+                  <div class="info-item">
+                    <strong>Códigos telefónicos:</strong>
+                    <span>{{ formatPhones(selectedCountry()!.phones!) }}</span>
+                  </div>
+                }
+                @if (selectedCountry()!.postalCode) {
+                  <div class="info-item full-width">
+                    <strong>Formato Código Postal:</strong>
+                    <span>{{ selectedCountry()!.postalCode!.format }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Idiomas -->
+            <div class="info-section">
+              <h3>Idiomas</h3>
+              <div class="languages-chips">
+                @for (language of selectedCountry()!.languages; track language) {
+                  <span class="chip">{{ language }}</span>
+                }
+              </div>
+            </div>
+
+            <!-- Zonas Horarias -->
+            <div class="info-section">
+              <h3>Zonas Horarias ({{ selectedCountry()!.timezones.length }})</h3>
+              <div class="timezones">
+                @for (timezone of selectedCountry()!.timezones; track timezone) {
+                  <span class="timezone-chip">{{ timezone }}</span>
+                }
+              </div>
+            </div>
+
+            <!-- Transporte -->
+            @if (selectedCountry()!.car) {
+              <div class="info-section">
+                <h3>Transporte</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <strong>Lado de Conducción:</strong>
+                    <span>{{ selectedCountry()!.car!.side === 'right' ? 'Derecha' : 'Izquierda' }}</span>
+                  </div>
+                  @if (selectedCountry()!.car!.signs && selectedCountry()!.car!.signs!.length > 0) {
+                    <div class="info-item">
+                      <strong>Código de Matrícula:</strong>
+                      <span>{{ selectedCountry()!.car!.signs!.join(', ') }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Deportes -->
+            @if (selectedCountry()!.fifa) {
+              <div class="info-section">
+                <h3>Deportes</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <strong>Código FIFA:</strong>
+                    <span>{{ selectedCountry()!.fifa }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Estados/Provincias -->
+            @if (selectedCountry()!.states && selectedCountry()!.states!.length > 0) {
+              <div class="info-section">
+                <h3>Estados/Provincias ({{ selectedCountry()!.states!.length }})</h3>
+                <div class="states-list">
+                  @for (state of selectedCountry()!.states; track state.code) {
+                    <span class="state-chip">{{ state.name }}</span>
+                  }
+                </div>
+              </div>
+            } @else if (selectedCountry()!.metadata?.states && selectedCountry()!.metadata!.states.length > 0) {
+              <div class="info-section">
+                <h3>Estados/Provincias ({{ selectedCountry()!.metadata!.states.length }})</h3>
+                <div class="states-list">
+                  @for (state of selectedCountry()!.metadata!.states; track state) {
+                    <span class="state-chip">{{ state }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            <!-- Enlaces y Mapas -->
+            @if (selectedCountry()!.maps) {
+              <div class="info-section">
+                <h3>Ver en Mapas</h3>
+                <div class="maps-links">
+                  <a [href]="selectedCountry()!.maps!.googleMaps" target="_blank" rel="noopener" class="map-link google">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                      <circle cx="12" cy="9" r="2.5"/>
+                    </svg>
+                    Google Maps
+                  </a>
+                  <a [href]="selectedCountry()!.maps!.openStreetMaps" target="_blank" rel="noopener" class="map-link osm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <line x1="2" y1="12" x2="22" y2="12"/>
+                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    OpenStreetMap
+                  </a>
+                </div>
+              </div>
+            }
+
+            <!-- Símbolos -->
+            @if (selectedCountry()!.emoji || selectedCountry()!.coatOfArms) {
+              <div class="info-section">
+                <h3>Símbolos</h3>
+                <div class="symbols-grid">
+                  @if (selectedCountry()!.emoji) {
+                    <div class="symbol-item">
+                      <strong>Emoji:</strong>
+                      <span class="emoji-large">{{ selectedCountry()!.emoji }}</span>
+                    </div>
+                  }
+                  @if (selectedCountry()!.coatOfArms?.png) {
+                    <div class="symbol-item">
+                      <strong>Escudo de Armas:</strong>
+                      <img [src]="selectedCountry()!.coatOfArms!.png!" alt="Escudo" class="coat-of-arms">
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

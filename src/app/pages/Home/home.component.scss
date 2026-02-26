@@ -1,0 +1,249 @@
+@use '../../../styles/mixins' as *;
+
+.home-container {
+  min-height: calc(100vh - 60px);
+  margin-top: 60px;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  animation: fadeIn 0.6s ease-in;
+
+  @include mobile {
+    padding: 1rem;
+    margin-top: 56px;
+  }
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+
+  @include tablet {
+    flex-direction: column;
+    gap: 2rem;
+    min-height: auto;
+  }
+
+  @include mobile {
+    gap: 1.5rem;
+  }
+}
+
+.left-section {
+  flex: 1;
+  animation: slideInLeft 0.8s ease-out;
+
+  @include mobile {
+    text-align: center;
+  }
+
+  .title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+
+    @include tablet {
+      font-size: 2.5rem;
+    }
+
+    @include mobile {
+      font-size: 2rem;
+    }
+  }
+
+  .subtitle {
+    font-size: 1.25rem;
+    color: #4a5568;
+    animation: fadeInUp 0.8s ease-out 0.4s backwards;
+
+    @include mobile {
+      font-size: 1rem;
+    }
+  }
+}
+
+.right-section {
+  flex: 1;
+  animation: slideInRight 0.8s ease-out;
+}
+
+.navigation-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  @include mobile {
+    gap: 1rem;
+  }
+}
+
+.nav-card {
+  background: white;
+  border: none;
+  border-radius: 16px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  animation: fadeInUp 0.8s ease-out backwards;
+
+  @include mobile {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
+
+  &:first-child {
+    animation-delay: 0.3s;
+  }
+
+  &:last-child {
+    animation-delay: 0.5s;
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+
+    @include mobile {
+      width: 50px;
+      height: 50px;
+    }
+
+    svg {
+      width: 32px;
+      height: 32px;
+
+      @include mobile {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+
+    @include mobile {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+
+    @include mobile {
+      font-size: 0.9rem;
+    }
+  }
+
+  &.conoceme {
+    .card-icon {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    h2 {
+      color: #667eea;
+    }
+
+    &:hover {
+      box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+      transform: translateY(-5px);
+
+      .card-icon {
+        transform: scale(1.1) rotate(5deg);
+      }
+
+      h2 {
+        transform: translateX(5px);
+      }
+    }
+  }
+
+  &.paises {
+    .card-icon {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    h2 {
+      color: #f5576c;
+    }
+
+    &:hover {
+      box-shadow: 0 8px 16px rgba(245, 87, 108, 0.3);
+      transform: translateY(-5px);
+
+      .card-icon {
+        transform: scale(1.1) rotate(-5deg);
+      }
+
+      h2 {
+        transform: translateX(5px);
+      }
+    }
+  }
+
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

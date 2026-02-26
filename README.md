@@ -1,59 +1,81 @@
+
 # Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.5.
+Este proyecto fue generado con [Angular CLI](https://github.com/angular/angular-cli) versión 21.1.5.
 
-## Development server
+## ¿Cómo correr el proyecto?
 
-To start a local development server, run:
+1. Instala las dependencias:
+	```bash
+	npm install
+	```
+2. Inicia el servidor de desarrollo:
+	```bash
+	npm start
+	```
+3. Abre tu navegador en `http://localhost:4200/`.
 
-```bash
-ng serve
+El sistema recargará automáticamente al modificar los archivos fuente.
+
+## Estructura del proyecto y flujo
+
+La estructura del frontend está organizada de la siguiente manera:
+
+```
+Frontend/
+├── angular.json            # Configuración principal de Angular
+├── package.json            # Dependencias y scripts
+├── proxy.conf.json         # Proxy para llamadas a backend
+├── tsconfig*.json          # Configuración de TypeScript
+├── public/                 # Archivos públicos
+├── src/
+│   ├── index.html          # HTML principal
+│   ├── main.ts             # Bootstrap de la app
+│   ├── main.server.ts      # Bootstrap para SSR
+│   ├── server.ts           # Configuración para SSR
+│   ├── styles.scss         # Estilos globales
+│   ├── app/
+│   │   ├── app.ts          # Componente raíz
+│   │   ├── app.html        # Plantilla del componente raíz
+│   │   ├── app.scss        # Estilos del componente raíz
+│   │   ├── app.routes.ts   # Rutas principales
+│   │   ├── app.config.ts   # Configuración de la app
+│   │   ├── components/
+│   │   │   └── navbar/     # Componente de navegación
+│   │   ├── models/         # Modelos de datos (ej. country.model.ts)
+│   │   ├── pages/          # Páginas principales
+│   │   │   ├── Home/       # Página de inicio
+│   │   │   ├── AboutMe/    # Página de información personal
+│   │   │   ├── Contries/   # Página de países y modal
+│   │   ├── services/       # Servicios para consumo de APIs
+│   ├── environments/       # Configuración de entornos
+│   ├── styles/             # Estilos globales y utilitarios
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Explicación de carpetas y subcarpetas
 
-## Code scaffolding
+- **app/**: Contiene el núcleo de la aplicación, componentes, modelos, páginas y servicios.
+  - **components/**: Componentes reutilizables (ejemplo: navbar).
+  - **models/**: Definición de interfaces y modelos de datos.
+  - **pages/**: Vistas principales del sistema (Home, AboutMe, Contries).
+  - **services/**: Servicios para interacción con APIs y lógica de negocio.
+- **environments/**: Configuración para distintos entornos (desarrollo, producción).
+- **styles/**: Archivos Sass para variables, mixins, animaciones y estilos globales.
+- **public/**: Archivos estáticos accesibles públicamente.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Flujo del frontend
 
-```bash
-ng generate component component-name
-```
+1. El usuario ingresa a la aplicación y navega por las páginas principales.
+2. Los servicios gestionan la obtención de datos desde el backend (vía REST o GraphQL).
+3. Los modelos estructuran los datos recibidos.
+4. Los componentes y páginas muestran la información y permiten interacción (ejemplo: modal de países, exportación a PDF).
+5. Los estilos y animaciones mejoran la experiencia visual.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Mejoras que pueden integrarse
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Internacionalización (i18n)**: Soporte multilenguaje para la interfaz.
+- **Mejoras visuales**: Añadir animaciones, temas personalizados y accesibilidad.
+- **Optimización de rendimiento**: Lazy loading de módulos y componentes.
+- **Gestión de usuarios**: Autenticación y autorización.
+- **Exportación de datos**: Mejorar la exportación a CSV/Excel, asi como añadir un formato al PDF.
+- **Logs y monitoreo**: Integrar servicios de logging y monitoreo.

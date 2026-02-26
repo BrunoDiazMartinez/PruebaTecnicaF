@@ -1,0 +1,35 @@
+<div class="home-container">
+  <div class="content">
+    <div class="left-section">
+      <h1 class="title">Bienvenido</h1>
+      <p class="subtitle">Explora las secciones de mi aplicación</p>
+    </div>
+    
+    <div class="right-section">
+      <div class="navigation-cards">
+        <button class="nav-card conoceme" (click)="navigateToAboutMe()">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h2>Conóceme</h2>
+          <p>Descubre más sobre mí</p>
+        </button>
+
+        <button class="nav-card paises" (click)="navigateToCountries()">
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+          </div>
+          <h2>Países</h2>
+          <p>Explora información de países</p>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
